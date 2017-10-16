@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Scientific Calculator</title>
+<meta name="keywords" content="">
+<meta name="description" content="Javascript scientific calculator">
+<link rel="stylesheet" href="/src/css.css" type="text/css">
+
+
+<style type="text/css">
+
+input {
+  width: 80%;
+  font-size: medium;
+}
+
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 24px;
+}
+
+input.dig { /*digit, ., or = */
+  width: 5em;
+  border-radius: 15px;
+}
+
+input.bin { /*binary operator*/
+  width: 5em;
+  border-radius: 15px;
+  background-color:aqua;
+}
+input.un { /*unary operator*/
+  width: 5em;
+  border-radius: 15px;
+  background-color:lime;
+}
+input.sp { /*special button*/
+  width: 5em;
+  border-radius: 15px;
+  background-color:pink;
+}
+
+body {
+  zoom: 1.3;
+  margin: 0px;
+  padding: 0px;
+}
+
+h1 {
+  font-size: medium;
+  font-weight: bold;
+}
+
+td {
+  width: 60px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table {
+  margin: 4px;
+  border: solid #000000;
+  width: 360px;
+  height: 240px;
+  border: 5px solid black;
+  text-align: center;
+  padding: 5px;
+  border-spacing: 5px;
+  /*border-collapse: collapse; /*for IE 5-7 browsers*/
+}
+
+</style>
+
+</head>
+
+<body>
+
+<form name="calculator">
+
+
+<table>
+
+<tr> 
+  <td colspan="4"> 
+    <input name="LCD" type="text" value="0">
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <input type="button" class="sp" value="&harr;" onclick="Click('swap')">
+  </td>
+  <td>
+  </td>
+  <td>
+  </td>
+  <td>
+    <input type="button" class="sp" value="C" onclick="Click('C')">
+  </td>
+</tr>
+
+<tr> 
+  <td>
+    <input type="button" class="dig" value="7" onclick="Click('7')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="8" onclick="Click('8')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="9" onclick="Click('9')">
+  </td>
+  <td>
+    <input type="button" class="bin" value="&divide;" onclick="Click('/')">
+  </td>
+</tr>
+
+<tr> 
+  <td>
+    <input type="button" class="dig" value="4" onclick="Click('4')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="5" onclick="Click('5')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="6" onclick="Click('6')">
+  </td>
+  <td>
+    <input type="button" class="bin" value="&times;" onclick="Click('*')">
+  </td>
+</tr>
+
+<tr> 
+  <td>
+    <input type="button" class="dig" value="1" onclick="Click('1')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="2" onclick="Click('2')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="3" onclick="Click('3')">
+  </td>
+  <td>
+    <input type="button" class="bin" value="&minus;" onclick="Click('-')">
+  </td>
+</tr>
+
+<tr> 
+  <td>
+    <input type="button" class="dig" value="0" onclick="Click('0')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="." onclick="Click('.')">
+  </td>
+  <td>
+    <input type="button" class="dig" value="=" onclick="Click('=')">
+  </td>
+  <td>
+    <input type="button" class="bin" value="+" onclick="Click('+')">
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <input type="button" class="un" value="sin" onclick="Click('sin')">
+  </td>
+  <td>
+    <input type="button" class="un" value="cos" onclick="Click('cos')">
+  </td>
+  <td>
+    <input type="button" class="un" value="tan" onclick="Click('tan')">
+  </td>
+  <td>
+    <input type="button" class="un" value="exp" onclick="Click('exp')">
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <input type="button" class="un" value="asin" onclick="Click('asin')">
+  </td>
+  <td>
+    <input type="button" class="un" value="acos" onclick="Click('acos')">
+  </td>
+  <td>
+    <input type="button" class="un" value="atan" onclick="Click('atan')">
+  </td>
+  <td>
+    <input type="button" class="un" value="log" onclick="Click('log')">
+  </td>
+</tr>
+
+<tr>
+  <td>
+    <input type="button" class="un" value="&radic;"
+           onclick="Click('sqrt')">
+  </td>
+  <td>
+    <input type="button" class="un" value="?" onclick="Click('rand')">
+  </td>
+  <td>
+    <input type="button" class="un" value="0" onclick="Click('memout')"
+           id="membutton">
+  </td>
+  <td>
+    <input type="button" class="un" value="mem" onclick="Click('memin')">
+  </td>
+</tr>
+
+</table>
+</form>
+
+<p id="archive"></p>
+
+<script>
+<!--
+/*jslint browser: true*/
+/*properties
+    '*', '+', '-', '/', LCD, PI, atan, calculator, exp, (...other math...),
+    getElementById, indexOf, length, rand, random, slice, value
+*/
+
+
+var LCD = '';      // currently on the calculator "LCD" screen
+var prev = '';     // name of previous button pushed
+var operand = '0'; // remember number for a binary operation
+var opname = '';   // infix binary operation yet to be evaluated
+var mem = '0';     // one number in memory
+
+// list of nullary, unary and binary operations
+// ("nullary operation" = constant)
+var nullop = {
+    "pi" : Math.PI
+};
+var unop = {
+    'sin' : Math.sin,
+    'cos' : Math.cos,
+    'tan' : Math.tan,
+    'asin' : Math.asin,
+    'acos' : Math.acos,
+    'atan' : Math.atan,
+    'exp' : Math.exp,
+    'log' : Math.log,
+    'sqrt' : Math.sqrt,
+    'rand' : Math.random
+};
+var binop = {
+    '+' : function (x, y) { "use strict"; return parseFloat(x) + parseFloat(y); },
+    '-' : function (x, y) { "use strict"; return parseFloat(x) - parseFloat(y); },
+    '*' : function (x, y) { "use strict"; return parseFloat(x) * parseFloat(y); },
+    '/' : function (x, y) { "use strict"; return parseFloat(x) / parseFloat(y); }
+};
+
+var digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.'];
+
+function clickDigit(x) {
+    "use strict";
+    if (LCD === '0' || LCD === '' || digits.indexOf(prev) === -1) {
+        // start typing a new number
+        LCD = x;
+        if (LCD === '.') {
+            LCD = '0.';
+        }
+    } else if (x !== '.' || LCD.indexOf(x) === -1) {
+        LCD += x;
+    }
+}
+
+function clickEquals() {
+    "use strict";
+    if (binop[opname] !== undefined) {
+        LCD = binop[opname](operand, LCD);
+        opname = '';
+        operand = '0';
+    }
+}
+
+function Click(ButtonName) {
+    "use strict";
+    LCD = document.calculator.LCD.value;
+    if (digits.indexOf(ButtonName) !== -1) {
+        clickDigit(ButtonName);
+    } else if (nullop[ButtonName] !== undefined) {
+        LCD = nullop[ButtonName];
+    } else if (unop[ButtonName] !== undefined) {
+        LCD = (unop[ButtonName](LCD));
+    } else if (binop[ButtonName] !== undefined) {
+        if (binop[prev] === undefined) {
+            clickEquals();
+        }
+        operand = LCD;
+        opname = ButtonName;
+    } else switch (ButtonName) {
+    case 'swap':
+        var temp = LCD;
+        LCD = operand;
+        operand = temp;
+        break;
+    case 'memin':
+        mem = LCD;
+        if (mem.length > 3) {
+            document.getElementById('membutton').value
+                = mem.slice(0, 4) + '...';
+        } else {
+            document.getElementById('membutton').value = mem;
+        }
+        document.getElementById('archive').innerHTML += "<br>" + mem;
+        break;
+    case 'memout':
+        LCD = mem;
+        break;
+    case '=':
+        clickEquals();
+        break;
+    case 'C':
+        LCD = '0';
+        opname = '';
+        operand = '';
+        break;
+    }
+    document.calculator.LCD.value = LCD;
+    prev = ButtonName;
+}
+
+//-->
+</script>
+
+
+
+</body>
+</html>
